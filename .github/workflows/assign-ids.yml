@@ -14,20 +14,12 @@ jobs:
       contents: write # for create-pull-request
       pull-requests: write # for create-pull-request
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
-      - name: Cache cargo bin
-        id: admin-cache
-        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
-        with:
-          path: ~/.cargo/bin
-          key: rustsec-admin-fd0658040d06dff9569dd7b2df60439db93403ec
-
       - name: Install rustsec-admin
-        if: steps.admin-cache.outputs.cache-hit != 'true'
-        run: cargo install --git https://github.com/rustsec/rustsec rustsec-admin --rev fd0658040d06dff9569dd7b2df60439db93403ec
+        uses: ./.github/actions/install-rustsec-admin
 
       - name: Assign IDs
         id: assign
@@ -42,7 +34,7 @@ jobs:
           ls -R ./crates/ ./rust/ | sha256sum >> .duplicate-id-guard
 
       - name: Create pull request
-        uses: peter-evans/create-pull-request@c0f553fe549906ede9cf27b5156039d195d2ece0 # v8.1.0
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: ${{ steps.assign.outputs.commit_message }}
